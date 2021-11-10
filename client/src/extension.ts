@@ -202,6 +202,11 @@ interface RuleCustomization  {
 	severity: RuleSeverity;
 }
 
+
+type SeverityConf = 0 | 1 | 2 | 'off' | 'warn' | 'error';
+
+type RuleConf = SeverityConf | [SeverityConf, ...any[]];
+
 interface ConfigurationSettings {
 	validate: Validate;
 	packageManager: 'npm' | 'yarn' | 'pnpm';
@@ -213,6 +218,7 @@ interface ConfigurationSettings {
 	onIgnoredFiles: ESLintSeverity;
 	options: any | undefined;
 	rulesCustomizations: RuleCustomization[];
+	rulesOverrides: Record<string, RuleConf>;
 	run: RunValues;
 	nodePath: string | null;
 	workspaceFolder: WorkspaceFolder | undefined;
@@ -1139,6 +1145,8 @@ function realActivate(context: ExtensionContext): void {
 							onIgnoredFiles: ESLintSeverity.from(config.get<string>('onIgnoredFiles', ESLintSeverity.off)),
 							options: config.get('options', {}),
 							rulesCustomizations: parseRulesCustomizations(config.get('rules.customizations')),
+							// TODO: Parse configuration for rules.overrides
+							rulesOverrides: config.get('rules.overrides', {}),
 							run: config.get('run', 'onType'),
 							nodePath: config.get<string | undefined>('nodePath', undefined) ?? null,
 							workingDirectory: undefined,

@@ -224,6 +224,7 @@ interface CommonSettings {
 	onIgnoredFiles: ESLintSeverity;
 	options: ESLintOptions | undefined;
 	rulesCustomizations: RuleCustomization[];
+	rulesOverrides: Record<string, RuleConf>;
 	run: RunValues;
 	nodePath: string | null;
 	workspaceFolder: WorkspaceFolder | undefined;
@@ -561,6 +562,11 @@ async function getSaveRuleConfig(filePath: string, settings: TextDocumentSetting
 	if (result !== undefined) {
 		return result;
 	}
+	const options: ESLintClassOptions = {
+		overrideConfig: {
+			rules: settings.rulesOverrides,
+		},
+	};
 	const rules = settings.codeActionOnSave.rules;
 	result = await withESLintClass(async (eslint) => {
 		if (rules === undefined || eslint.isCLIEngine) {
@@ -584,7 +590,7 @@ async function getSaveRuleConfig(filePath: string, settings: TextDocumentSetting
 			}
 		}
 		return offRules.size > 0 ? { offRules, onRules } : undefined;
-	}, settings);
+	}, settings, options);
 	if (result === undefined || result === null) {
 		saveRuleConfigCache.set(filePath, null);
 		return undefined;
@@ -1613,6 +1619,12 @@ async function validate(document: TextDocument, settings: TextDocumentSettings &
 	const uri = document.uri;
 	const file = getESLintFilePath(document, settings);
 
+	const options: ESLintClassOptions = {
+		overrideConfig: {
+			rules: settings.rulesOverrides,
+		}
+	};
+
 	await withESLintClass(async (eslintClass) => {
 		codeActions.delete(uri);
 		const reportResults: ESLintDocumentReport[] = await eslintClass.lintText(content, { filePath: file, warnIgnored: settings.onIgnoredFiles !== ESLintSeverity.off });
@@ -1642,7 +1654,7 @@ async function validate(document: TextDocument, settings: TextDocumentSettings &
 		if (publishDiagnostics) {
 			connection.sendDiagnostics({ uri, diagnostics });
 		}
-	}, settings);
+	}, settings, options);
 }
 
 function withESLintClass<T>(func: (eslintClass: ESLintClass) => T, settings: TextDocumentSettings & { library: ESLintModule }, options?: ESLintClassOptions | CLIOptions): T {
@@ -2273,9 +2285,8 @@ async function computeAllFixes(identifier: VersionedTextDocumentIdentifier, mode
 		const saveConfig = filePath !== undefined && mode === AllFixesMode.onSave ? await getSaveRuleConfig(filePath, settings) : undefined;
 		const offRules = saveConfig?.offRules;
 		const onRules = saveConfig?.onRules;
-		let overrideConfig: Required<ConfigData> | undefined;
+		let overrideConfig: Required<ConfigData> = {rules: settings.rulesOverrides};
 		if (offRules !== undefined) {
-			overrideConfig = { rules: Object.create(null) };
 			for (const ruleId of offRules) {
 				overrideConfig.rules[ruleId] = 'off';
 			}

@@ -438,6 +438,11 @@
 					"scope": "resource",
 					"type": "array",
 					"description": "Override the severity of one or more rules reported by this extension, regardless of the project's ESLint config. Use globs to apply default severities for multiple rules."
+				},
+				"eslint.rules.overrides": {
+					"type": "object",
+					"scope": "resource",
+					"description": "Override the ESLint rules configuration. Rules set through this option will take precedence over project configuration, but will respect the configurations set in eslint.codeActionsOnSave.rules and eslint.rules.customizations. See https://eslint.org/docs/user-guide/configuring/rules# configuring-rules for configuration format."
 				}
 			}
 		},
