@@ -466,6 +466,16 @@
 				"title": "Restart ESLint Server",
 				"category": "ESLint",
 				"command": "eslint.restart"
+			},
+			{
+				"title": "Don't show error dialogs",
+				"category": "ESLint",
+				"command": "eslint.silentErrors"
+			},
+			{
+				"title": "Show all error dialogs",
+				"category": "ESLint",
+				"command": "eslint.loudErrors"
 			}
 		],
 		"taskDefinitions": [

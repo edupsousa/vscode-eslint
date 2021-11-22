@@ -459,7 +459,9 @@ export function activate(context: ExtensionContext) {
 		Commands.registerCommand('eslint.executeAutofix', notValidating),
 		Commands.registerCommand('eslint.showOutputChannel', notValidating),
 		Commands.registerCommand('eslint.migrateSettings', notValidating),
-		Commands.registerCommand('eslint.restart', notValidating)
+		Commands.registerCommand('eslint.restart', notValidating),
+		Commands.registerCommand('eslint.silentErrors', notValidating),
+		Commands.registerCommand('eslint.loudErrors', notValidating)
 	];
 
 	context.subscriptions.push(
@@ -1486,7 +1488,13 @@ function realActivate(context: ExtensionContext): void {
 			} else {
 				start();
 			}
-		})
+		}),
+		Commands.registerCommand('eslint.silentErrors', () => {
+			console.log('SilentErrors');
+		}),
+		Commands.registerCommand('eslint.loudErrors', () => {
+			console.log('LoudErrors');
+		}),
 	);
 }
 
