@@ -468,14 +468,14 @@
 				"command": "eslint.restart"
 			},
 			{
-				"title": "Don't show error dialogs",
+				"title": "Don't show server errors",
 				"category": "ESLint",
-				"command": "eslint.silentErrors"
+				"command": "eslint.dontShowServerErrors"
 			},
 			{
-				"title": "Show all error dialogs",
+				"title": "Show server errors",
 				"category": "ESLint",
-				"command": "eslint.loudErrors"
+				"command": "eslint.showServerErrors"
 			}
 		],
 		"taskDefinitions": [

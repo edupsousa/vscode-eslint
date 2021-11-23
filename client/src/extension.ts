@@ -287,6 +287,10 @@ namespace ShowOutputChannel {
 	export const type = new NotificationType0('eslint/showOutputChannel');
 }
 
+namespace DontShowServerErrors {
+	export const type = new NotificationType<boolean>('eslint/dontShowServerErrors');
+}
+
 const exitCalled = new NotificationType<[number, string]>('eslint/exitCalled');
 
 interface WorkspaceFolderItem extends QuickPickItem {
@@ -1489,11 +1493,11 @@ function realActivate(context: ExtensionContext): void {
 				start();
 			}
 		}),
-		Commands.registerCommand('eslint.silentErrors', () => {
-			console.log('SilentErrors');
+		Commands.registerCommand('eslint.dontShowServerErrors', () => {
+			void client.sendNotification(DontShowServerErrors.type, true);
 		}),
-		Commands.registerCommand('eslint.loudErrors', () => {
-			console.log('LoudErrors');
+		Commands.registerCommand('eslint.showServerErrors', () => {
+			void client.sendNotification(DontShowServerErrors.type, false);
 		}),
 	);
 }
